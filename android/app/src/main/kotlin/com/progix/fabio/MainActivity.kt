@@ -1,4 +1,4 @@
-package com.example.fabio
+package com.progix.fabio
 
 import io.flutter.embedding.android.FlutterActivity
 
