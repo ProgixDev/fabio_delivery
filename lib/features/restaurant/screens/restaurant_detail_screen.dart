@@ -42,6 +42,16 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
   final GlobalKey _scrollViewKey = GlobalKey();
   final Map<String, GlobalKey> _sectionKeys = {};
 
+  /// Status-bar / notch height reserved above the pinned category bar so it
+  /// clears the notch once pinned. Resolved from [MediaQuery] in
+  /// [didChangeDependencies].
+  double _stickyBarInset = 0;
+
+  /// Total height the pinned category bar occupies from the top of the
+  /// screen (its reserved notch inset plus the bar itself). Sections must
+  /// clear this to be considered "active".
+  double get _stickyHeight => _categoryBarHeight + _stickyBarInset;
+
   late final List<FoodCategory> _menuCategories;
   late final Map<String, List<Dish>> _dishesByCategory;
 
@@ -70,6 +80,12 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _stickyBarInset = MediaQuery.of(context).padding.top;
+  }
+
+  @override
   void dispose() {
     _scrollController.removeListener(_handleScroll);
     _scrollController.dispose();
@@ -91,7 +107,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
           entry.value.currentContext?.findRenderObject() as RenderBox?;
       if (box == null) continue;
       final dy = box.localToGlobal(Offset.zero, ancestor: viewportBox).dy;
-      final delta = dy - _categoryBarHeight;
+      final delta = dy - _stickyHeight;
       if (delta <= 24 && -delta < closestDelta) {
         closestDelta = -delta;
         closestId = entry.key;
@@ -114,7 +130,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
 
     final sectionBox = sectionContext.findRenderObject() as RenderBox;
     final dy = sectionBox.localToGlobal(Offset.zero, ancestor: viewportBox).dy;
-    final target = (_scrollController.offset + dy - _categoryBarHeight).clamp(
+    final target = (_scrollController.offset + dy - _stickyHeight).clamp(
       0.0,
       _scrollController.position.maxScrollExtent,
     );
@@ -182,6 +198,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
               pinned: true,
               delegate: StickyCategoryBarDelegate(
                 height: _categoryBarHeight,
+                topInset: _stickyBarInset,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.pageHorizontal,

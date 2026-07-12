@@ -55,13 +55,9 @@ class _ProfileMenuTileState extends State<ProfileMenuTile> {
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
             child: Row(
               children: [
-                Container(
+                SizedBox(
                   width: 40,
                   height: 40,
-                  decoration: BoxDecoration(
-                    color: widget.iconBackground ?? AppColors.lightOrange,
-                    borderRadius: BorderRadius.circular(AppRadius.sm),
-                  ),
                   child: Icon(
                     widget.icon,
                     size: 20,

@@ -9,6 +9,7 @@ import 'state/orders_provider.dart';
 void main() {
   runApp(const FabioApp());
 }
+
 class FabioApp extends StatelessWidget {
   const FabioApp({super.key});
   @override

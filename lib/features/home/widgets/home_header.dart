@@ -33,7 +33,7 @@ class HomeHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Bonjour $customerName 👋',
+                'Bonjour $customerName',
                 style: AppTextStyles.h1,
                 overflow: TextOverflow.ellipsis,
               ),

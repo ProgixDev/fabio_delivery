@@ -6,17 +6,27 @@ import '../../../core/theme/app_shadows.dart';
 /// while the dish sections scroll underneath it. A soft shadow fades in
 /// once content actually starts sliding under the bar, so it reads as
 /// "floating" rather than always-elevated.
+///
+/// [topInset] is the status-bar / notch height (`MediaQuery.padding.top`).
+/// It is reserved above [child] and filled with the bar's background so that,
+/// once the bar pins to the top of the screen, the chips sit below the notch
+/// instead of overlapping it.
 class StickyCategoryBarDelegate extends SliverPersistentHeaderDelegate {
   final double height;
+  final double topInset;
   final Widget child;
 
-  const StickyCategoryBarDelegate({required this.height, required this.child});
+  const StickyCategoryBarDelegate({
+    required this.height,
+    required this.child,
+    this.topInset = 0,
+  });
 
   @override
-  double get minExtent => height;
+  double get minExtent => height + topInset;
 
   @override
-  double get maxExtent => height;
+  double get maxExtent => height + topInset;
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
@@ -26,12 +36,17 @@ class StickyCategoryBarDelegate extends SliverPersistentHeaderDelegate {
         color: AppColors.background,
         boxShadow: overlapsContent ? AppShadows.soft : null,
       ),
-      child: child,
+      child: Padding(
+        padding: EdgeInsets.only(top: topInset),
+        child: child,
+      ),
     );
   }
 
   @override
   bool shouldRebuild(covariant StickyCategoryBarDelegate oldDelegate) {
-    return height != oldDelegate.height || child != oldDelegate.child;
+    return height != oldDelegate.height ||
+        topInset != oldDelegate.topInset ||
+        child != oldDelegate.child;
   }
 }
